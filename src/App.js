@@ -29,7 +29,9 @@ import { useState } from 'react';
  * Make sure to prevent begin able to click the square more than once. Try an early return to see if "squares[i]" exists already.
  * 
  * 3. Declare the winner!
- * Use the calculateWinner function and return early if the squares match a winner.
+ * Use the calculateWinner function and return early if the squares match a winner and end the game.
+ * 
+ * Create a div.status container at the top of the board.
  * 
  */
 
