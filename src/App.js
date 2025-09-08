@@ -123,8 +123,9 @@ const calculateWinner = (squares) => {
 	// So if [0,1,2] then a=0, b=1, c=2;
 	// Standard "for loop", Start with i = 0. Keep going as long as i is smaller than the number of things in lines. After each round, add 1 to i.
 	for (let i = 0; i < lines.length; i++) {
-		// This is destructuring. It is shorthand way to pull out the value of the first, second and third value in a line with the the right index. The for loop will check each of the line arrays and run it through the check below. If any of them are the same then you have a match.
-		//This line is extracting each value of each line. So let's pull out 0, 1 and 2. So now a=0, b=1 and c=2.
+		// This is destructuring. It is shorthand way to extract the values of the first, second and third items in each winning line combination. The for loop will check each of the line arrays and see if any of them match the values and locations of the squares array.
+		//This variable extracts each value of each lines array item.
+		// So on the first loop, let's pull out 0, 1 and 2. So now a=0, b=1 and c=2. Does anything match? nope? ok do the next index line and try 3, 4, and 5. Do any of those appear in the locations of the squares array index values? Yes? Ok we have a winner.
 		const [a, b, c] = lines[i];
 		// Is there something in the first spot (not empty)? And is the same thing in the second spot? and is the same thing in the third spot? (if all 3 are the same then we have a winner)
 		if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
