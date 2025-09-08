@@ -2,10 +2,10 @@ import { useState } from 'react';
 
 /**
  * STEPS
- * 1. Fill out Board with 3 '.board-row' rows of 3 squares
+ * ? 1. Fill out Board with 3 '.board-row' rows of 3 squares
  * Set up Square so "X" appears on click
  *
- * 2. Alternate "X"s and "O"s on the board
+ * ? 2. Alternate "X"s and "O"s on the board
  * Create your default squares state to be 9 elements with a state of "null". Array(9).fill(null)
  * Pass down the value of each square by using the {square} state. value={state[0]}
  * 
@@ -13,7 +13,7 @@ import { useState } from 'react';
  * 
  * This F will make a new squares array. It will pass in an index and update the value of the "i" that  was passed/clicked and will set the squares state with the new index value... either an "X/O". You are rendering a new array with every click, each time updating that corresponding value within the array.
  * 
- * ? So why make a copy of the array each time instead of mutating the original? In certain situations there are benefits of making new copies each time, like being able to compare one array with the other. Can undo, redo, etc...
+ * ...So why make a copy of the array each time instead of mutating the original? In certain situations there are benefits of making new copies each time, like being able to compare one array with the other. Can undo, redo, etc...
  * 
  * Example:
   function handleClick(i) {
@@ -28,15 +28,17 @@ import { useState } from 'react';
  * 
  * Make sure to prevent begin able to click the square more than once. Try an early return to see if "squares[i]" exists already.
  * 
- * 3. Declare the winner!
+ * ? 3. Declare the winner!
  * Use the calculateWinner function and return early if the squares match a winner and end the game.
  * 
  * Create a div.status container at the top of the board.
+ * Make a new variable to represent the winning value as "winner".
+ * Make a new mutatable variable "status" (let), and modify this variable to either make "status" say "Winner (winner)" or Next Player: (X or 0)
  * 
  */
 
 // JS func to calculate a winner.
-// squares is the array with the values of "X/O/null"
+// squares is a nine string array. This will check if any specific combinations of the values in this array match any winning value and will declare a winner.
 const calculateWinner = (squares) => {
 	// These identify the winning square combinations. 0,1,2 is the top line.
 	const lines = [
@@ -51,10 +53,14 @@ const calculateWinner = (squares) => {
 	];
 	// This for loop will loop through the lines and check for a winning combination.
 	// So if [0,1,2] then a=0, b=1, c=2;
-	// ! I don't understand this
+	// Standard "for loop", Start with i = 0. Keep going as long as i is smaller than the number of things in lines. After each round, add 1 to i.
 	for (let i = 0; i < lines.length; i++) {
+		// This is destructuring. It is shorthand way to pull out the value of the first, second and third value in a line with the the right index. The for loop will check each of the line arrays and run it through the check below. If any of them are the same then you have a match.
+		//This line is extracting each value of each line. So let's pull out 0, 1 and 2. So now a=0, b=1 and c=2.
 		const [a, b, c] = lines[i];
+		// Is there something in the first spot (not empty)? And is the same thing in the second spot? and is the same thing in the third spot? (if all 3 are the same then we have a winner)
 		if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
+			// return the winning value which will either be X or O.
 			return squares[a];
 		}
 	}
@@ -88,8 +94,17 @@ const Board = () => {
 		setXIsNext((is) => !is);
 	};
 
+	const winner = calculateWinner(squares);
+	let status;
+	if (winner) {
+		status = `Winner: ${winner}`;
+	} else {
+		status = `Next Player: ${xIsNext ? 'X' : 'O'}`;
+	}
+
 	return (
 		<>
+			<div className='status'>{status}</div>
 			<div className='board-row'>
 				<Square value={squares[0]} onClick={() => handleClick(0)} />
 				<Square value={squares[1]} onClick={() => handleClick(1)} />
