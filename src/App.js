@@ -35,6 +35,74 @@ import { useState } from 'react';
  * Make a new variable to represent the winning value as "winner".
  * Make a new mutatable variable "status" (let), and modify this variable to either make "status" say "Winner (winner)" or Next Player: (X or 0)
  * 
+ * ? 4. Prep "time travel"
+ * Make a new <Game /> component as the export default.
+ * 
+ * export default function Game() {
+  return (
+    <div className="game">
+      <div className="game-board">
+        <Board />
+      </div>
+      <div className="game-info">
+        <ol>todo</ol>
+      </div>
+    </div>
+  );
+}
+ * Make some Game state: 1. history, which will be A SINGLE ARRAY item of an array of nine. 2. a derived "currentSquare" state which is derived as item 0 in the "history" array.
+ *
+ * Raise all necessary state from Board up into game, so all children have access. Squares will now be derived from "history".
+ * 
+ * Create a new "handlePlay" helper function to pass into an "onPlay" prop to the Board. This will allow child to parent communication to set the new array when clicked within Board.
+ * 
+ * This function will pass in a newArray object and ADD it as a new item to the current "history" array. Then it will toggle the xIsNext value.
+ * 
+ * ? 5. Show past moves
+ * 
+ * Map in some li into the ol. Try doing the map INLINE instead of making a separate <Item /> component. ex: const moves = history.map(); and implement {moves} in your component.
+ * ! new understanding of index. When using map(), the first arg (the state) doesn't really need to be used if you want to utilize the second arg which represents the index. THE INDEX CAN BE NAMED ANYTHING, not just "i". So map((_, move)) basic says "I don't care about the state" and I am making the index represented as the variable "move" within the map.
+ * The li will get a mutable variable for description the either says "Go to move #___" or "Go to game start" 
+ * The li contains a button with an onClick to fire a "jumpTo" function.
+ * 
+ * Define a "currentMove" state to keep track of what the current move is and default to 0.
+ * 
+ * Update the jumpTo F so currentMove is updated to whatever li is clicked.
+ * Also update setXIsNext to be true if the number being changed to is even. This is to reset who's turn it is to the correct X or O.
+ * ? use the Modulo operator %. In this case, it basically checks if the number can be divided equally into two parts meaning it would be an even number. It would return either a true or a false.
+ * setXIsNext(nextMove % 2 === 0);
+ * 
+ * !challenging... 
+ * If you “go back in time” and then make a new move from that point, you only want to keep the history up to that point. Instead of adding nextSquares after all items (... spread syntax) in history, you’ll add it after all items in history.slice(0, currentMove + 1) so that you’re only keeping that portion of the old history.
+ * ? this means slice will reset the history array to be from index 0 to the "currentMove" plus 1 to get the correct number value, and THEN add all future numbers after that.
+ * 
+ * Each time a move is made, you need to update currentMove to point to the latest history entry.
+ * setCurrentMove(nextHistory.length - 1);
+ * 
+ * example:
+ * function handlePlay(nextSquares) {
+  const nextHistory = [...history.slice(0, currentMove + 1), nextSquares];
+  setHistory(nextHistory);
+  setCurrentMove(nextHistory.length - 1);
+  setXIsNext(!xIsNext);
+}
+ * 
+ * Finally, you need to update the currentSquares variable to be the currently selected move, instead of the length of history. history[currentMove]
+ * 
+ * You should have a functioning app now. 
+ * 
+ * ? FINAL CLEANUPS
+ * You can now derive what xIsNext by tapping into currentMove. So if the currentMove is even then make xIsNext true. Therefore you can remove the get/set state for xIsNext and just make it a variable. You can remove the setXIsNext toggles.
+ * 
+ * ? EXTRA CREDIT
+ * If you have extra time or want to practice your new React skills, here are some ideas for improvements that you could make to the tic-tac-toe game, listed in order of increasing difficulty:
+
+For the current move only, show “You are at move #…” instead of a button.
+Rewrite Board to use two loops to make the squares instead of hardcoding them.
+Add a toggle button that lets you sort the moves in either ascending or descending order.
+When someone wins, highlight the three squares that caused the win (and when no one wins, display a message about the result being a draw).
+Display the location for each move in the format (row, col) in the move history list.
+ * 
  */
 
 // JS func to calculate a winner.
@@ -75,10 +143,7 @@ const Square = ({ value, onClick }) => {
 	);
 };
 
-const Board = () => {
-	const [squares, setSquares] = useState(Array(9).fill(null));
-	const [xIsNext, setXIsNext] = useState(true);
-
+const Board = ({ squares, xIsNext, onPlay }) => {
 	const handleClick = (i) => {
 		const nextSquares = squares.slice();
 
@@ -90,8 +155,7 @@ const Board = () => {
 			nextSquares[i] = 'O';
 		}
 
-		setSquares(nextSquares);
-		setXIsNext((is) => !is);
+		onPlay(nextSquares);
 	};
 
 	const winner = calculateWinner(squares);
@@ -123,4 +187,49 @@ const Board = () => {
 		</>
 	);
 };
-export default Board;
+
+const Game = () => {
+	const [history, setHistory] = useState([Array(9).fill(null)]);
+	const [currentMove, setCurrentMove] = useState(0);
+	const xIsNext = currentMove % 2 === 0;
+	const currentSquares = history[currentMove];
+
+	const handlePlay = (newArr) => {
+		const nextHistory = [...history.slice(0, currentMove + 1), newArr];
+
+		setHistory(nextHistory);
+		setCurrentMove(nextHistory.length - 1);
+	};
+
+	const jumpTo = (nextMove) => {
+		setCurrentMove(nextMove);
+	};
+
+	const move = history.map((_, move) => {
+		let description;
+
+		if (move > 0) {
+			description = `Go to move #${move}`;
+		} else {
+			description = `Go to game start`;
+		}
+
+		return (
+			<li key={move}>
+				<button onClick={() => jumpTo(move)}>{description}</button>
+			</li>
+		);
+	});
+
+	return (
+		<div className='game'>
+			<div className='game-board'>
+				<Board squares={currentSquares} xIsNext={xIsNext} onPlay={handlePlay} />
+			</div>
+			<div className='game-info'>
+				<ol>{move}</ol>
+			</div>
+		</div>
+	);
+};
+export default Game;
