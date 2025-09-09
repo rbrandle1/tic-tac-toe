@@ -4,9 +4,8 @@ import { useState } from 'react';
  * ? EXTRA CREDIT
  * If you have extra time or want to practice your new React skills, here are some ideas for improvements that you could make to the tic-tac-toe game, listed in order of increasing difficulty:
 
-For the current move only, show “You are at move #…” instead of a button.
-
 Rewrite Board to use two loops to make the squares instead of hardcoding them.
+
 Add a toggle button that lets you sort the moves in either ascending or descending order.
 When someone wins, highlight the three squares that caused the win (and when no one wins, display a message about the result being a draw).
 Display the location for each move in the format (row, col) in the move history list.
@@ -65,23 +64,37 @@ const Board = ({ squares, xIsNext, onPlay }) => {
 	}
 
 	return (
+		// Original:
+		// <>
+		// 	<div className='status'>{status}</div>
+		// 	<div className='board-row'>
+		// 		<Square value={squares[0]} onClick={() => handleClick(0)} />
+		// 		<Square value={squares[1]} onClick={() => handleClick(1)} />
+		// 		<Square value={squares[2]} onClick={() => handleClick(2)} />
+		// 	</div>
+		// 	<div className='board-row'>
+		// 		<Square value={squares[3]} onClick={() => handleClick(3)} />
+		// 		<Square value={squares[4]} onClick={() => handleClick(4)} />
+		// 		<Square value={squares[5]} onClick={() => handleClick(5)} />
+		// 	</div>
+		// 	<div className='board-row'>
+		// 		<Square value={squares[6]} onClick={() => handleClick(6)} />
+		// 		<Square value={squares[7]} onClick={() => handleClick(7)} />
+		// 		<Square value={squares[8]} onClick={() => handleClick(8)} />
+		// 	</div>
+		// </>
 		<>
+			{/* Extra credit: Use two loops to construct the board*/}
 			<div className='status'>{status}</div>
-			<div className='board-row'>
-				<Square value={squares[0]} onClick={() => handleClick(0)} />
-				<Square value={squares[1]} onClick={() => handleClick(1)} />
-				<Square value={squares[2]} onClick={() => handleClick(2)} />
-			</div>
-			<div className='board-row'>
-				<Square value={squares[3]} onClick={() => handleClick(3)} />
-				<Square value={squares[4]} onClick={() => handleClick(4)} />
-				<Square value={squares[5]} onClick={() => handleClick(5)} />
-			</div>
-			<div className='board-row'>
-				<Square value={squares[6]} onClick={() => handleClick(6)} />
-				<Square value={squares[7]} onClick={() => handleClick(7)} />
-				<Square value={squares[8]} onClick={() => handleClick(8)} />
-			</div>
+			{[0, 1, 2].map((row) => (
+				<div key={row} className='board-row'>
+					{[0, 1, 2].map((square) => {
+						const i = row * 3 + square;
+
+						return <Square key={i} value={squares[i]} onClick={() => handleClick(i)} />;
+					})}
+				</div>
+			))}
 		</>
 	);
 };
