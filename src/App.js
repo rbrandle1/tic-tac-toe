@@ -137,15 +137,40 @@ const calculateWinner = (squares) => {
 	return null;
 };
 
-const Square = () => {
-	return <button className='square'>x</button>;
+const Square = ({ value, onClick }) => {
+	return (
+		<button className='square' onClick={onClick}>
+			{value}
+		</button>
+	);
 };
 
 const Board = () => {
+	const [squares, setSquares] = useState(Array(9).fill(null));
+	const [isXNext, setIsXNext] = useState(true);
+
+	const handleClick = (num) => {
+		const newArr = squares.slice();
+
+		if (squares[num]) return;
+
+		if (isXNext) {
+			newArr[num] = 'X';
+		} else {
+			newArr[num] = 'O';
+		}
+		setSquares(newArr);
+		setIsXNext((is) => !is);
+	};
+
+	// update a value in an array...
+
 	return (
 		<>
 			<div className='board-row'>
-				<Square />
+				<Square value={squares[0]} onClick={() => handleClick(0)} />
+				<Square value={squares[1]} onClick={() => handleClick(1)} />
+				<Square value={squares[2]} onClick={() => handleClick(2)} />
 			</div>
 		</>
 	);
