@@ -1,19 +1,5 @@
 import { useState } from 'react';
 
-/**
- * ? EXTRA CREDIT
- * If you have extra time or want to practice your new React skills, here are some ideas for improvements that you could make to the tic-tac-toe game, listed in order of increasing difficulty:
-
-When someone wins, highlight the three squares that caused the win (and when no one wins, display a message about the result being a draw).
-// 1. need to know/extract the winning combination
-// 2. would need to know if a particular square is a winning square. Possibly by modifying the array to be an array of objects to include a value boolean that indicates if it was a winning square or not. Would need to reset this boolean accordingly.
-// 3. need to apply a style to those squares.
-
-Display the location for each move in the format (row, col) in the move history list.
-// would need to add to the array object which row and col was clicked.
- * 
- */
-
 const calculateWinner = (squares) => {
 	const lines = [
 		[0, 1, 2],
@@ -66,27 +52,7 @@ const Board = ({ squares, xIsNext, onPlay }) => {
 	}
 
 	return (
-		// Original:
-		// <>
-		// 	<div className='status'>{status}</div>
-		// 	<div className='board-row'>
-		// 		<Square value={squares[0]} onClick={() => handleClick(0)} />
-		// 		<Square value={squares[1]} onClick={() => handleClick(1)} />
-		// 		<Square value={squares[2]} onClick={() => handleClick(2)} />
-		// 	</div>
-		// 	<div className='board-row'>
-		// 		<Square value={squares[3]} onClick={() => handleClick(3)} />
-		// 		<Square value={squares[4]} onClick={() => handleClick(4)} />
-		// 		<Square value={squares[5]} onClick={() => handleClick(5)} />
-		// 	</div>
-		// 	<div className='board-row'>
-		// 		<Square value={squares[6]} onClick={() => handleClick(6)} />
-		// 		<Square value={squares[7]} onClick={() => handleClick(7)} />
-		// 		<Square value={squares[8]} onClick={() => handleClick(8)} />
-		// 	</div>
-		// </>
 		<>
-			{/* Extra credit: Use two loops to construct the board*/}
 			<div className='status'>{status}</div>
 			{[0, 1, 2].map((row) => (
 				<div key={row} className='board-row'>
@@ -118,19 +84,9 @@ const Game = () => {
 		setCurrentMove(nextMove);
 	};
 
-	{
-		/* Extra credit: sort ascending an descending*/
-	}
-	let sortedHistory;
-	if (sortBy === 'asc') {
-		sortedHistory = history;
-	}
-	if (sortBy === 'desc') {
-		sortedHistory = history.slice().reverse();
-	}
+	const sortedHistory = sortBy === 'desc' ? history.slice().reverse() : history;
 
 	const move = sortedHistory.map((items) => {
-		// In order to sort, need to calculate the original move index for unique keys, avoiding the re-indexing issue.
 		const index = history.findIndex((el) => el === items);
 
 		let description;
