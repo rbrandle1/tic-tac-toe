@@ -4,8 +4,6 @@ import { useState } from 'react';
  * ? EXTRA CREDIT
  * If you have extra time or want to practice your new React skills, here are some ideas for improvements that you could make to the tic-tac-toe game, listed in order of increasing difficulty:
 
-Rewrite Board to use two loops to make the squares instead of hardcoding them.
-
 Add a toggle button that lets you sort the moves in either ascending or descending order.
 When someone wins, highlight the three squares that caused the win (and when no one wins, display a message about the result being a draw).
 Display the location for each move in the format (row, col) in the move history list.
@@ -100,13 +98,14 @@ const Board = ({ squares, xIsNext, onPlay }) => {
 };
 
 const Game = () => {
-	const [history, setHistory] = useState([Array(9).fill(null)]);
+	const [history, setHistory] = useState([{ id: 0, squares: Array(9).fill(null) }]);
 	const [currentMove, setCurrentMove] = useState(0);
+	const [sortBy, setSortBy] = useState('asc');
 	const xIsNext = currentMove % 2 === 0;
-	const currentSquares = history[currentMove];
+	const currentSquares = history[currentMove].squares;
 
 	const handlePlay = (newArr) => {
-		const nextHistory = [...history.slice(0, currentMove + 1), newArr];
+		const nextHistory = [...history.slice(0, currentMove + 1), { id: history.length, squares: newArr }];
 
 		setHistory(nextHistory);
 		setCurrentMove(nextHistory.length - 1);
@@ -116,21 +115,32 @@ const Game = () => {
 		setCurrentMove(nextMove);
 	};
 
-	const move = history.map((_, move) => {
+	let sortedHistory;
+	if (sortBy === 'asc') {
+		sortedHistory = history;
+		console.log('asc');
+	}
+	if (sortBy === 'desc') {
+		sortedHistory = history.slice().reverse();
+		console.log('desc');
+	}
+
+	const move = sortedHistory.map((el, i) => {
+		const originalMoveIndex = sortBy === 'desc' ? history.length - 1 - i : i;
 		let description;
 
-		if (move > 0) {
-			description = `Go to move #${move}`;
+		if (originalMoveIndex > 0) {
+			description = `Go to move #${originalMoveIndex}`;
 		} else {
 			description = `Go to game start`;
 		}
 
 		return (
-			<li key={move}>
-				{move === currentMove ? (
+			<li key={el.id}>
+				{originalMoveIndex === currentMove && currentMove !== 0 ? (
 					<span>You are at move {currentMove}</span>
 				) : (
-					<button onClick={() => jumpTo(move)}>{description}</button>
+					<button onClick={() => jumpTo(originalMoveIndex)}>{description}</button>
 				)}
 			</li>
 		);
@@ -142,7 +152,12 @@ const Game = () => {
 				<Board squares={currentSquares} xIsNext={xIsNext} onPlay={handlePlay} />
 			</div>
 			<div className='game-info'>
-				<ol>{move}</ol>
+				<label htmlFor='sort'>Sort by:</label>
+				<select id='sort' value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+					<option value='asc'>Ascending</option>
+					<option value='desc'>Descending</option>
+				</select>
+				<ol reversed={sortBy === 'desc'}>{move}</ol>
 			</div>
 		</div>
 	);
