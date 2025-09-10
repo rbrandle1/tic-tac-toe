@@ -121,13 +121,7 @@ const Game = () => {
 	{
 		/* Extra credit: sort ascending an descending*/
 	}
-	let sortedHistory;
-	if (sortBy === 'asc') {
-		sortedHistory = history;
-	}
-	if (sortBy === 'desc') {
-		sortedHistory = history.slice().reverse();
-	}
+	const sortedHistory = sortBy === 'desc' ? history.slice().reverse() : history;
 
 	const move = sortedHistory.map((items) => {
 		// In order to sort, need to calculate the original move index for unique keys, avoiding the re-indexing issue.
