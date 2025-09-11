@@ -3,37 +3,7 @@ import { use, useState } from 'react';
 
 /**
  * STEPS
- * 
- * ? 3. Declare the winner!
- * Use the calculateWinner function and return early if the squares match a winner and end the game.
- * 
- * Create a div.status container at the top of the board.
- * Make a new variable to represent the winning value as "winner".
- * Make a new mutatable variable "status" (let), and modify this variable to either make "status" say "Winner (winner)" or Next Player: (X or 0)
- * 
- * ? 4. Prep "time travel"
- * Make a new <Game /> component as the export default.
- * 
- * export default function Game() {
-  return (
-    <div className="game">
-      <div className="game-board">
-        <Board />
-      </div>
-      <div className="game-info">
-        <ol>todo</ol>
-      </div>
-    </div>
-  );
-}
- * Make some Game state: 1. history, which will be A SINGLE ARRAY item of an array of nine. 2. a derived "currentSquare" state which is derived as item 0 in the "history" array.
- *
- * Raise all necessary state from Board up into game, so all children have access. Squares will now be derived from "history".
- * 
- * Create a new "handlePlay" helper function to pass into an "onPlay" prop to the Board. This will allow child to parent communication to set the new array when clicked within Board.
- * 
- * This function will pass in a newArray object and ADD it as a new item to the current "history" array. Then it will toggle the xIsNext value.
- * 
+
  * ? 5. Show past moves
  * 
  * Map in some li into the ol. Try doing the map INLINE instead of making a separate <Item /> component. ex: const moves = history.map(); and implement {moves} in your component.
@@ -120,9 +90,9 @@ const Square = ({ value, onClick }) => {
 	);
 };
 
-const Board = () => {
-	const [squares, setSquares] = useState(Array(9).fill(null));
-	const [xIsNext, setXIsNext] = useState(true);
+const Board = ({ squares, xIsNext, onPlay }) => {
+	// const [squares, setSquares] = useState(Array(9).fill(null));
+	// const [xIsNext, setXIsNext] = useState(true);
 	const winner = calculateWinner(squares);
 
 	const handleClick = (num) => {
@@ -136,8 +106,7 @@ const Board = () => {
 			newArr[num] = 'O';
 		}
 
-		setSquares(newArr);
-		setXIsNext((is) => !is);
+		onPlay(newArr);
 	};
 
 	const status = winner ? `Winner: ${winner}` : `Next player: ${xIsNext ? 'X' : 'O'}`;
@@ -157,4 +126,30 @@ const Board = () => {
 		</>
 	);
 };
-export default Board;
+
+const Game = () => {
+	const [history, setHistory] = useState([Array(9).fill(null)]);
+	const [xIsNext, setXIsNext] = useState(true);
+	const currentSquare = history[0];
+
+	const handlePlay = (newArr) => {
+		setHistory((move) => {
+			const addArr = [...move, newArr];
+
+			return addArr;
+		});
+		setXIsNext((is) => !is);
+	};
+
+	return (
+		<div className='game'>
+			<div className='game-board'>
+				<Board squares={history} xIsNext={xIsNext} onPlay={handlePlay} />
+			</div>
+			<div className='game-info'>
+				<ol>todo</ol>
+			</div>
+		</div>
+	);
+};
+export default Game;
