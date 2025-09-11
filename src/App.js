@@ -1,33 +1,8 @@
 // React tutorial: https://react.dev/learn/tutorial-tic-tac-toe
-import { useState } from 'react';
+import { use, useState } from 'react';
 
 /**
  * STEPS
- * ? 1. Fill out Board with 3 '.board-row' rows of 3 squares
- * Set up Square so "X" appears on click
- *
- * ? 2. Alternate "X"s and "O"s on the board
- * Create your default squares state to be 9 elements with a state of "null". Array(9).fill(null)
- * Pass down the value of each square by using the {square} state. value={state[0]}
- * 
- * Set up a handler F to setSquares to either "X", "O" or null:
- * 
- * This F will make a new squares array. It will pass in an index and update the value of the "i" that  was passed/clicked and will set the squares state with the new index value... either an "X/O". You are rendering a new array with every click, each time updating that corresponding value within the array.
- * 
- * ...So why make a copy of the array each time instead of mutating the original? In certain situations there are benefits of making new copies each time, like being able to compare one array with the other. Can undo, redo, etc...
- * 
- * Example:
-  function handleClick(i) {
-    const nextSquares = squares.slice();
-    nextSquares[i] = "X";
-    setSquares(nextSquares);
-  }
- * 
- * Now update your Square component onClick props to pass in their appropriate index value, 0,2,3,4, etc...
- * 
- * Next, set up a boolean state to toggle whether "x" is next or not. In the handlClick helper function, you'll want to also update this state if (xIsNext) render it "X" else "O"
- * 
- * Make sure to prevent begin able to click the square more than once. Try an early return to see if "squares[i]" exists already.
  * 
  * ? 3. Declare the winner!
  * Use the calculateWinner function and return early if the squares match a winner and end the game.
@@ -147,31 +122,38 @@ const Square = ({ value, onClick }) => {
 
 const Board = () => {
 	const [squares, setSquares] = useState(Array(9).fill(null));
-	const [isXNext, setIsXNext] = useState(true);
+	const [xIsNext, setXIsNext] = useState(true);
+	const winner = calculateWinner(squares);
 
 	const handleClick = (num) => {
 		const newArr = squares.slice();
 
-		if (squares[num]) return;
+		if (squares[num] || calculateWinner(squares)) return;
 
-		if (isXNext) {
+		if (xIsNext) {
 			newArr[num] = 'X';
 		} else {
 			newArr[num] = 'O';
 		}
+
 		setSquares(newArr);
-		setIsXNext((is) => !is);
+		setXIsNext((is) => !is);
 	};
 
-	// update a value in an array...
+	const status = winner ? `Winner: ${winner}` : `Next player: ${xIsNext ? 'X' : 'O'}`;
 
 	return (
 		<>
-			<div className='board-row'>
-				<Square value={squares[0]} onClick={() => handleClick(0)} />
-				<Square value={squares[1]} onClick={() => handleClick(1)} />
-				<Square value={squares[2]} onClick={() => handleClick(2)} />
-			</div>
+			<div className='status'>{status}</div>
+			{[0, 1, 2].map((row) => (
+				<div key={row} className='board-row'>
+					{[0, 1, 2].map((col) => {
+						const colIndex = row * 3 + col;
+
+						return <Square key={col} value={squares[colIndex]} onClick={() => handleClick(colIndex)} />;
+					})}
+				</div>
+			))}
 		</>
 	);
 };
