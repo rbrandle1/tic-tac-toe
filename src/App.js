@@ -130,7 +130,7 @@ const Board = ({ squares, xIsNext, onPlay }) => {
 const Game = () => {
 	const [history, setHistory] = useState([Array(9).fill(null)]);
 	const [xIsNext, setXIsNext] = useState(true);
-	const currentSquare = history[0];
+	const currentSquares = history[history.length - 1];
 
 	const handlePlay = (newArr) => {
 		setHistory((move) => {
@@ -144,7 +144,7 @@ const Game = () => {
 	return (
 		<div className='game'>
 			<div className='game-board'>
-				<Board squares={history} xIsNext={xIsNext} onPlay={handlePlay} />
+				<Board squares={currentSquares} xIsNext={xIsNext} onPlay={handlePlay} />
 			</div>
 			<div className='game-info'>
 				<ol>todo</ol>
