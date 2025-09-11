@@ -51,7 +51,7 @@ import { useState } from 'react';
     </div>
   );
 }
- * Make some Game state: 1. history, which will be A SINGLE ARRAY item of an array of nine. 2. a derived "currentSquare" state which is derived as item 0 in the "history" array.
+ * Make some Game state: 1. history, which will be A SINGLE ARRAY item of an array of nine. 2. a derived "currentSquares" state which is derived as item 0 in the "history" array. Basically, to retrieve the last squares array from the history
  *
  * Raise all necessary state from Board up into game, so all children have access. Squares will now be derived from "history".
  * 
